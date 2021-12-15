@@ -220,11 +220,11 @@ int main(int argc, char * argv[]) {
 
   auto dsigma4 = get_gradient(stress_calculation_AD(du_dx_and_perturbation, C1, D1));
 
-  std::cout << dsigma1 << std::endl;
-  std::cout << dsigma2 << std::endl;
-  std::cout << dsigma3 << std::endl;
-  std::cout << dsigma4 << std::endl;
-  std::cout << std::endl;
+  //std::cout << dsigma1 << std::endl;
+  //std::cout << dsigma2 << std::endl;
+  //std::cout << dsigma3 << std::endl;
+  //std::cout << dsigma4 << std::endl;
+  //std::cout << std::endl;
 
   tensor<double, 3, 3, 3, 3> gradient1{};
 
@@ -244,10 +244,10 @@ int main(int argc, char * argv[]) {
   }
 
   tensor<double, 3, 3, 3, 3> gradient2 = material.gradient(du_dx);
-  std::cout << gradient1 - gradient2 << std::endl;
+  // std::cout << gradient1 - gradient2 << std::endl;
 
   auto output = stress_calculation_AD(make_dual(du_dx), C1, D1);
-  std::cout << gradient1 - get_gradient(output) << std::endl;
+  // std::cout << gradient1 - get_gradient(output) << std::endl;
 
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
@@ -263,37 +263,5 @@ int main(int argc, char * argv[]) {
 
   ::benchmark::Initialize(&argc, argv);
   ::benchmark::RunSpecifiedBenchmarks();
-
-
-  // output on my machine:
-  // 
-  // sam@provolone:~/code/enzyme_test$ ./a.out 
-  // {{196.379, 175.236, 149.678}, {175.236, 129.861, 53.6773}, {149.678, 53.6773, 127.09}}
-  // {{196.379, 175.236, 149.678}, {175.236, 129.861, 53.6773}, {149.678, 53.6773, 127.09}}
-  // {{196.379, 175.236, 149.678}, {175.236, 129.861, 53.6773}, {149.678, 53.6773, 127.09}}
-  // {{196.379, 175.236, 149.678}, {175.236, 129.861, 53.6773}, {149.678, 53.6773, 127.09}}
-  // 
-  // {{{{-5.68434e-14, -3.55271e-15, 0}, {0, 0, -3.55271e-15}, {-3.55271e-15, 7.10543e-15, -2.84217e-14}}, {{1.42109e-14, -1.42109e-14, -3.55271e-15}, {-1.42109e-14, 1.42109e-14, 3.55271e-15}, {3.55271e-15, -7.10543e-15, 1.42109e-14}}, {{0, 0, 0}, {0, 0, -4.44089e-16}, {0, 0, -3.55271e-15}}}, {{{1.42109e-14, -1.42109e-14, -3.55271e-15}, {-1.42109e-14, 1.42109e-14, 3.55271e-15}, {3.55271e-15, -7.10543e-15, 1.42109e-14}}, {{-2.84217e-14, 0, 1.77636e-15}, {-7.10543e-15, -5.68434e-14, -7.10543e-15}, {-3.55271e-15, 7.10543e-15, -2.84217e-14}}, {{1.06581e-14, -1.33227e-15, -3.33067e-16}, {-1.77636e-15, 7.10543e-15, 0}, {0, -1.42109e-14, 7.10543e-15}}}, {{{0, 0, 0}, {0, 0, -4.44089e-16}, {0, 0, -3.55271e-15}}, {{1.06581e-14, -1.33227e-15, -3.33067e-16}, {-1.77636e-15, 7.10543e-15, 0}, {0, -1.42109e-14, 7.10543e-15}}, {{0, 0, 0}, {-7.10543e-15, 0, -3.55271e-15}, {-3.55271e-15, 0, 0}}}}
-  // {{{{-5.68434e-14, -7.10543e-15, 0}, {-7.10543e-15, 2.84217e-14, -3.55271e-15}, {7.10543e-15, -7.10543e-15, 0}}, {{1.42109e-14, -1.42109e-14, 0}, {0, 2.84217e-14, 0}, {3.55271e-15, -3.55271e-15, 1.42109e-14}}, {{0, 0, 0}, {0, 0, -4.44089e-16}, {0, 0, -3.55271e-15}}}, {{{1.42109e-14, -1.42109e-14, 0}, {0, 2.84217e-14, 0}, {3.55271e-15, -3.55271e-15, 1.42109e-14}}, {{-2.84217e-14, 0, 8.88178e-16}, {-2.13163e-14, 0, 0}, {1.06581e-14, -7.10543e-15, 2.84217e-14}}, {{7.10543e-15, -4.44089e-16, -2.22045e-16}, {0, 7.10543e-15, 0}, {0, -1.42109e-14, 7.10543e-15}}}, {{{0, 0, 0}, {0, 0, -4.44089e-16}, {0, 0, -3.55271e-15}}, {{7.10543e-15, -4.44089e-16, -2.22045e-16}, {0, 7.10543e-15, 0}, {0, -1.42109e-14, 7.10543e-15}}, {{-2.84217e-14, 0, 0}, {-1.42109e-14, 5.68434e-14, -3.55271e-15}, {7.10543e-15, -7.10543e-15, 0}}}}
-  // 2021-12-10T10:02:21-08:00
-  // Running ./a.out
-  // Run on (20 X 4500 MHz CPU s)
-  // CPU Caches:
-  //   L1 Data 32 KiB (x10)
-  //   L1 Instruction 32 KiB (x10)
-  //   L2 Unified 1024 KiB (x10)
-  //   L3 Unified 14080 KiB (x1)
-  // Load Average: 0.30, 0.15, 0.06
-  // ***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
-  // ***WARNING*** Library was built as DEBUG. Timings may be affected.
-  // ------------------------------------------------------------------------------
-  // Benchmark                                    Time             CPU   Iterations
-  // ------------------------------------------------------------------------------
-  // stress_calculation_direct                 45.3 ns         45.1 ns     15515566
-  // gradient_calculation_enzyme               1850 ns         1843 ns       379902
-  // gradient_calculation_symbolic              128 ns          127 ns      5485601
-  // gradient_calculation_dual                  767 ns          764 ns       915475
-  // action_of_gradient_calculation_dual       98.9 ns         98.5 ns      7106251
-
 
 }
