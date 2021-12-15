@@ -97,6 +97,7 @@ static void stress_calculation_direct(benchmark::State& state) {
   NeoHookeanMaterial material{C1, D1};
 
   for (auto _ : state) {
+    du_dx[0][0] += 0.00001;
     auto sigma = material.stress(du_dx);
     benchmark::DoNotOptimize(sigma);
   }
@@ -114,6 +115,7 @@ static void gradient_calculation_enzyme(benchmark::State& state) {
   double D1 = 50.0;
 
   for (auto _ : state) {
+    du_dx[0][0] += 0.00001;
     tensor<double, 3, 3, 3, 3> gradient{};
 
     tensor<double, 3, 3> sigma{};
@@ -146,6 +148,7 @@ static void gradient_calculation_symbolic(benchmark::State& state) {
   NeoHookeanMaterial material{C1, D1};
 
   for (auto _ : state) {
+    du_dx[0][0] += 0.00001;
     auto gradient = material.gradient(du_dx);
     benchmark::DoNotOptimize(gradient);
   }
@@ -164,7 +167,7 @@ static void gradient_calculation_dual(benchmark::State& state) {
   auto arg = make_dual(du_dx);
 
   for (auto _ : state) {
-
+    arg[0][0].value += 0.00001;
     auto gradient = stress_calculation_AD(arg, C1, D1);
     benchmark::DoNotOptimize(gradient);
   }
@@ -180,9 +183,8 @@ static void action_of_gradient_calculation_dual(benchmark::State& state) {
   double C1 = 100.0;
   double D1 = 50.0;
 
-  auto arg = make_dual(du_dx);
-
   for (auto _ : state) {
+    du_dx[0][0] += 0.00001;
     tensor< dual< double >, 3, 3 > du_dx_and_perturbation;
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
