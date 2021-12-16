@@ -257,7 +257,7 @@ HOST_DEVICE constexpr auto operator*(const tensor<T, n...>& A, S scale) {
 }
 
 template <typename S, typename T, int... n,
-          typename = std::enable_if_t<std::is_arithmetic_v<S> > >
+          typename = std::enable_if_t<std::is_arithmetic_v<S> || is_dual_number<S>::value > >
 constexpr auto operator/(S scale, const tensor<T, n...>& A) {
   tensor<decltype(S{} * T{}), n...> C{};
   for (int i = 0; i < tensor<T, n...>::first_dim; i++) { C[i] = scale / A[i]; }
@@ -265,7 +265,7 @@ constexpr auto operator/(S scale, const tensor<T, n...>& A) {
 }
 
 template <typename S, typename T, int... n,
-          typename = std::enable_if_t<std::is_arithmetic_v<S> > >
+          typename = std::enable_if_t<std::is_arithmetic_v<S> || is_dual_number<S>::value > >
 constexpr auto operator/(const tensor<T, n...>& A, S scale) {
   tensor<decltype(T{} * S{}), n...> C{};
   for (int i = 0; i < tensor<T, n...>::first_dim; i++) { C[i] = A[i] / scale; }
@@ -478,6 +478,21 @@ constexpr auto sqnorm(const tensor<T, m, n>& A) {
   for (int i = 0; i < m; i++) {
     for (int j = 0; j < n; j++) {
       total += A[i][j] * A[i][j];
+    }
+  }
+  return total;
+}
+
+template <typename T, int m, int n, int p, int q>
+constexpr auto sqnorm(const tensor<T, m, n, p, q>& A) {
+  T total{};
+  for (int i = 0; i < m; i++) {
+    for (int j = 0; j < n; j++) {
+      for (int k = 0; k < p; k++) {
+        for (int l = 0; l < q; l++) {
+          total += A[i][j][k][l] * A[i][j][k][l];
+        }
+      }
     }
   }
   return total;
