@@ -389,6 +389,32 @@ static void action_of_gradient_calculation_precomputed_gradient(benchmark::State
 }
 BENCHMARK(action_of_gradient_calculation_precomputed_gradient);
 
+static void action_of_gradient_calculation_enzyme_fwd(benchmark::State& state) {
+  double epsilon = 1.0e-8;
+  tensor<double, 3, 3> du_dx = {{{0.2, 0.4, -0.1}, {0.2, 0.1, 0.3}, {0.01, -0.2, 0.3}}};
+  tensor<double, 3, 3> perturbation = {{{1.0, 0.2, 0.8}, {2.0, 0.1, 0.3}, {0.4, 0.2, 0.7}}};
+
+  double C1 = 100.0;
+  double D1 = 50.0;
+
+  NeoHookeanMaterial material{C1, D1};
+
+  for (auto _ : state)
+  {
+    tensor<double, 3, 3> sigma{};
+    tensor<double, 3, 3> dsigma{};
+
+    __enzyme_fwddiff<void>(stress_calculation,
+                           enzyme_dup, &du_dx, &perturbation,
+                           enzyme_const, C1,
+                           enzyme_const, D1,
+                           enzyme_dupnoneed, &sigma, &dsigma);
+    benchmark::DoNotOptimize(dsigma);
+    benchmark::DoNotOptimize(du_dx);
+  }
+}
+BENCHMARK(action_of_gradient_calculation_enzyme_fwd);
+
 int main(int argc, char * argv[]) {
 
   check_derivatives(IsotropicLinearElasticMaterial{100.0, 50.0});
